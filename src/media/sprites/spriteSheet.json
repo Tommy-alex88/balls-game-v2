@@ -1,0 +1,48 @@
+{
+  "frames": {
+    "Blue.png": {
+      "frame": { "x": 0, "y": 0, "w": 70, "h": 70 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 70 },
+      "sourceSize": { "w": 70, "h": 70 }
+    },
+    "Green.png": {
+      "frame": { "x": 70, "y": 0, "w": 70, "h": 70 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 70 },
+      "sourceSize": { "w": 70, "h": 70 }
+    },
+    "Red.png": {
+      "frame": { "x": 140, "y": 0, "w": 70, "h": 70 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 70 },
+      "sourceSize": { "w": 70, "h": 70 }
+    },
+    "Violet.png": {
+      "frame": { "x": 210, "y": 0, "w": 70, "h": 70 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 70 },
+      "sourceSize": { "w": 70, "h": 70 }
+    },
+    "Yellow.png": {
+      "frame": { "x": 280, "y": 0, "w": 70, "h": 70 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 70 },
+      "sourceSize": { "w": 70, "h": 70 }
+    }
+  },
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "spriteSheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 350, "h": 70 },
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:5c6b3fa6791ef513fd9e95e61df6e712:3cbdfaf1fa4e3e03d94ca1bff29d03c9:ea5d22e715ea7a530878e244f6ee1006$"
+  }
+}
