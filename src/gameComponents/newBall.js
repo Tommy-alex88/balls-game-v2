@@ -1,23 +1,25 @@
 import * as PIXI from "pixi.js";
 import gsap from "gsap";
-import { checkRowsAndColumns } from "./checkRowsAndColumns";
 
-import Blue from "../media/ballsTextures/Blue.png";
-import Green from "../media/ballsTextures/Green.png";
-import Red from "../media/ballsTextures/Red.png";
-import Violet from "../media/ballsTextures/Violet.png";
-import Yellow from "../media/ballsTextures/Yellow.png";
+import checkRowsAndColumns from "./checkRowsAndColumns";
+import isMovePossible from "./isMovePossible";
+import removeBalls from "./removeBalls";
+import randomColoredBallTexture from "./randomColoredBallTexture";
+import { gameScene } from "../App";
+import { gameSound } from "./sound";
 
 let firstBall = null;
 let secondBall = null;
 let canPick = true;
+let ballsTable = [];
 
 //функция создания шара с координатами x и y случайного цвета
-export const newBall = (x, y) => {
-  const imgArr = [Blue, Green, Red, Violet, Yellow];
+export const newBall = (x, y, table) => {
+  if (table !== null) {
+    ballsTable = table;
+  }
 
-  const randIndex = Math.floor(Math.random() * 5);
-  const randColor = imgArr[randIndex];
+  const randColor = randomColoredBallTexture();
 
   const ballTexture = PIXI.Texture.from(randColor);
   const ball = new PIXI.Sprite(ballTexture);
@@ -31,17 +33,18 @@ export const newBall = (x, y) => {
   ball._anchor.set(0.5);
   ball.alpha = 1;
   ball.on("click", onButtonClick); // действие при нажатии на шар
-  // sprite.on("removed", fillUpVacancies); // действие при удалении шара (заполняем таблицу новыми шарами вместо удаленных)
+  ball.on("removed", fillUpVacancies); // действие при удалении шара (заполняем таблицу новыми шарами вместо удаленных)
 
   return ball;
 };
 
 function onButtonClick() {
+  gameSound.play("clickBall");
+
   if (canPick) {
     // можем ли выбрать шар
     if (!this.isSelected) {
       this.isSelected = true; // выбираем шар
-      //select.play();
       this.scale.x = 0.75; // меняем размер
       this.scale.y = 0.75;
       //console.log(this.position.x, this.position.y, this.name, this.theValue);
@@ -61,19 +64,23 @@ function onButtonClick() {
             (firstBall.position.y === secondBall.position.y &&
               (firstBall.position.x === secondBall.position.x - 75 ||
                 firstBall.position.x === secondBall.position.x + 75))) &&
-          isMoveRight(ballsTable, firstBall, secondBall)
+          isMovePossible(ballsTable, firstBall, secondBall)
         ) {
           // проверяем корректность хода
 
           // меняем шары местами с помощью анимации TweenMax
-          tempX = firstBall.position.x;
-          tempY = firstBall.position.y;
+          let tempX = firstBall.position.x;
+          let tempY = firstBall.position.y;
           gsap.to(firstBall.position, {
             duration: 0.1,
             x: secondBall.position.x,
             y: secondBall.position.y,
           });
-          gsap.to(secondBall.position, { duration: 0.1, x: tempX, y: tempY });
+          gsap.to(secondBall.position, {
+            duration: 0.1,
+            x: tempX,
+            y: tempY,
+          });
 
           // ждем завершения анимации чтобы начать выполнение действий с шарами
           setTimeout(function () {
@@ -91,13 +98,13 @@ function onButtonClick() {
             ballsTable[(secondBall.position.x - 360) / 75][
               (secondBall.position.y - 65) / 75
             ] = secondBall;
-            firstBall.destroy();
+            //firstBall.destroy();
             firstBall = null;
-            secondBall.destroy();
+            //secondBall.destroy();
             secondBall = null;
             canPick = true;
             ////console.log("шары поменял местами");
-            processArray();
+            processArray(ballsTable);
           }, 150);
         } else {
           // если шары не рядом, то возвращаем все как было или ход невозможен
@@ -123,8 +130,84 @@ function onButtonClick() {
     }
   }
 }
-function processArray() {
-  checkRowsAndColumns(ballsTable); // проверяем таблицу, ищем по три и более шаров подряд и помечаем их (ball.TheVal = 0)
-  removeBalls(ballsTable); // удаляем отмеченные шары, которые после удаления сразу запустят функцию fillUpVacancies
-  requestAnimationFrame(animate); // обновление экрана
+
+//заполнение вакансий, образованных после "сгорания" шаров
+function fillUpVacancies() {
+  // вместо таймаута вставить анимацию заполнения
+  setTimeout(function () {
+    // Здесь мы ждем, пока пройдет анимация удаления
+    //console.log("Заполняем вакансии...");
+    for (let i = 0; i < 5; i++) {
+      let toCreate = 0;
+      ////console.log("В процессе столбец: " + i);
+      for (let j = 4; j >= 0; j--) {
+        if (
+          j !== 0 &&
+          ballsTable[i][j] === null &&
+          ballsTable[i][j - 1] === null
+        ) {
+          //console.log("Обрабатываемый индекс: " + j + ". Нет шара ни здесь, ни сверху");
+          toCreate++;
+        } else if (
+          j !== 0 &&
+          ballsTable[i][j] === null &&
+          ballsTable[i][j - 1] !== null
+        ) {
+          //console.log("Обрабатываемый индекс: " + j + ". Нет шара здесь, зато есть сверху");
+
+          new gsap.to(ballsTable[i][j - 1].position, {
+            duration: 0.3, // анимация перемещения шара вниз
+            x: 360 + 75 * i,
+            y: 65 + 75 * (j + toCreate),
+          });
+          // //console.log("Обновляем массив", i, j);
+          ballsTable[i][j + toCreate] = ballsTable[i][j - 1]; // обновляем наш массив
+          ballsTable[i][j - 1] = null; // обнуляем в нашем массиве верхний шар таблицы !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        }
+        // если нет самого верхнего шара в таблице
+        else if (j === 0 && ballsTable[i][j] === null) {
+          // //console.log("Обрабатываемый индекс: " + j + ". Нет шара в верху таблицы");
+
+          //let ballsArray = [];
+
+          for (let c = 0; c <= toCreate; c++) {
+            // создаем шары в количестве toCreate
+            let ball = newBall(i, c, null);
+            ball.scale.x = 0.75;
+            ball.scale.y = 0.75;
+
+            new gsap.to(ball.scale, {
+              duration: 0.2,
+              x: 1,
+              y: 1,
+              onComplete: lateCheck,
+            }); // анимация длится 200 мс
+            gameScene.addChild(ball);
+            //ballIn.play();
+            ballsTable[i][c] = ball; // обновляем нашу таблицу
+
+            //console.log(ballsTable[i][c].name + " " + i + " " + c + " создан");
+          }
+        }
+      }
+      ////console.log("Обработан столбец: " + i);
+    }
+    //processArray(ballsTable);
+
+    function lateCheck() {
+      // Callback анимации создания шара: после создания нужно проверить таблицу заново
+      setTimeout(() => {
+        // задержка запуска проверки. мы ждем, пока закончится анимация заполнения
+        processArray(ballsTable);
+      }, 400);
+    }
+
+    ////console.log("закончили");
+    let toCheck = true; // флаг, указывающий на необходимость проверки, если были созданы шары
+  }, 200); // время, необходимое для завершение анимации удаления
+}
+export function processArray(table) {
+  checkRowsAndColumns(table); // проверяем таблицу, ищем по три и более шаров подряд и помечаем их (ball.TheVal = 0)
+  removeBalls(table); // удаляем отмеченные шары, которые после удаления сразу запустят функцию fillUpVacancies
+  //requestAnimationFrame(animate); // обновление экрана
 }

@@ -1,31 +1,31 @@
-import * as TweenMax from "gsap";
+import gsap from "gsap";
 
 //заполнение вакансий, образованных после "сгорания" шаров
-export function fillUpVacancies() {
+function fillUpVacancies(ballsTable) {
   // вместо таймаута вставить анимацию заполнения
   setTimeout(function () {
     // Здесь мы ждем, пока пройдет анимация удаления
     //console.log("Заполняем вакансии...");
-    for (var i = 0; i < 5; i++) {
-      var toCreate = 0;
+    for (let i = 0; i < 5; i++) {
+      let toCreate = 0;
       ////console.log("В процессе столбец: " + i);
-      for (var j = 4; j >= 0; j--) {
+      for (let j = 4; j >= 0; j--) {
         if (
           j !== 0 &&
           ballsTable[i][j] === null &&
           ballsTable[i][j - 1] === null
         ) {
-          // //console.log("Обрабатываемый индекс: " + j + ". Нет шара ни здесь, ни сверху");
+          //console.log("Обрабатываемый индекс: " + j + ". Нет шара ни здесь, ни сверху");
           toCreate++;
         } else if (
           j !== 0 &&
           ballsTable[i][j] === null &&
           ballsTable[i][j - 1] !== null
         ) {
-          // //console.log("Обрабатываемый индекс: " + j + ". Нет шара здесь, зато есть сверху");
+          //console.log("Обрабатываемый индекс: " + j + ". Нет шара здесь, зато есть сверху");
 
-          new TweenMax(ballsTable[i][j - 1].position, 0.3, {
-            // анимация перемещения шара вниз
+          new gsap(ballsTable[i][j - 1].position, {
+            duration: 0.3, // анимация перемещения шара вниз
             x: 360 + 75 * i,
             y: 65 + 75 * (j + toCreate),
           });
@@ -73,3 +73,5 @@ export function fillUpVacancies() {
     toCheck = true; // флаг, указывающий на необходимость проверки, если были созданы шары
   }, 200); // время, необходимое для завершение анимации удаления
 }
+
+export default fillUpVacancies;
