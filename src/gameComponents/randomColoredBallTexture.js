@@ -1,8 +1,8 @@
-import Blue from "../media/ballsTextures/Blue.png";
-import Green from "../media/ballsTextures/Green.png";
-import Red from "../media/ballsTextures/Red.png";
-import Violet from "../media/ballsTextures/Violet.png";
-import Yellow from "../media/ballsTextures/Yellow.png";
+import Blue from "../assets/ballsTextures/Blue.png";
+import Green from "../assets/ballsTextures/Green.png";
+import Red from "../assets/ballsTextures/Red.png";
+import Violet from "../assets/ballsTextures/Violet.png";
+import Yellow from "../assets/ballsTextures/Yellow.png";
 
 // поулчение рандомного цвета
 const randomColoredBallTexture = () => {

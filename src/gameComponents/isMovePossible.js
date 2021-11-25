@@ -9,7 +9,7 @@ const isMovePossible = (table, b1, b2) => {
   table[(b2.position.x - 360) / 75][(b2.position.y - 65) / 75] = tempBall1;
 
   const isPossible = checkRowsAndColumns(table); // проводим проверку сгорания после хода
-  // возвращаем все как было
+  // // возвращаем все как было
   table[(b1.position.x - 360) / 75][(b1.position.y - 65) / 75] = tempBall1;
   table[(b2.position.x - 360) / 75][(b2.position.y - 65) / 75] = tempBall2;
 

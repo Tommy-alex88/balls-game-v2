@@ -1,77 +1,77 @@
 import gsap from "gsap";
 
+import { gameScene } from "./startGame";
+import { gameSound } from "./sound";
+import newBall from "./newBall";
+import processArray from "./processArray";
+import resetTable from "./resetTable";
+import isPlayingPossible from "./isPlayingPossible";
+
 //заполнение вакансий, образованных после "сгорания" шаров
-function fillUpVacancies(ballsTable) {
-  // вместо таймаута вставить анимацию заполнения
-  setTimeout(function () {
-    // Здесь мы ждем, пока пройдет анимация удаления
-    //console.log("Заполняем вакансии...");
+const fillUpVacancies = (ballsTable) => {
+  const fillAnimation = new Promise((resolve) => {
     for (let i = 0; i < 5; i++) {
       let toCreate = 0;
-      ////console.log("В процессе столбец: " + i);
       for (let j = 4; j >= 0; j--) {
         if (
           j !== 0 &&
           ballsTable[i][j] === null &&
           ballsTable[i][j - 1] === null
         ) {
-          //console.log("Обрабатываемый индекс: " + j + ". Нет шара ни здесь, ни сверху");
           toCreate++;
         } else if (
           j !== 0 &&
           ballsTable[i][j] === null &&
           ballsTable[i][j - 1] !== null
         ) {
-          //console.log("Обрабатываемый индекс: " + j + ". Нет шара здесь, зато есть сверху");
-
-          new gsap(ballsTable[i][j - 1].position, {
-            duration: 0.3, // анимация перемещения шара вниз
+          new gsap.to(ballsTable[i][j - 1].position, {
+            duration: 0.5, // анимация перемещения шара вниз
             x: 360 + 75 * i,
             y: 65 + 75 * (j + toCreate),
+            onComplete: updateTable(),
           });
-          // //console.log("Обновляем массив", i, j);
-          ballsTable[i][j + toCreate] = ballsTable[i][j - 1]; // обновляем наш массив
-          ballsTable[i][j - 1] = null; // обнуляем в нашем массиве верхний шар таблицы
+          function updateTable() {
+            ballsTable[i][j + toCreate] = ballsTable[i][j - 1]; // обновляем наш массив
+            ballsTable[i][j - 1] = null; // обнуляем в нашем массиве верхний шар таблицы !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          }
         }
         // если нет самого верхнего шара в таблице
         else if (j === 0 && ballsTable[i][j] === null) {
           // //console.log("Обрабатываемый индекс: " + j + ". Нет шара в верху таблицы");
 
-          ballsArray = [];
-          randBall();
-
-          for (var c = 0; c <= toCreate; c++) {
+          for (let c = 0; c <= toCreate; c++) {
             // создаем шары в количестве toCreate
-            var ball = newBall(i, c);
+            let ball = newBall(i, c, null);
             ball.scale.x = 0.75;
             ball.scale.y = 0.75;
-            new TweenMax(ball.scale, 0.2, {
+            new gsap.to(ball.scale, {
+              duration: 0.25,
               x: 1,
               y: 1,
-              onComplete: lateCheck,
-            }); // анимация длится 200 мс
+              onComplete: complete,
+            });
             gameScene.addChild(ball);
-            ballIn.play();
             ballsTable[i][c] = ball; // обновляем нашу таблицу
-
-            //console.log(ballsTable[i][c].name + " " + i + " " + c + " создан");
+            function complete() {
+              console.log(c + "  " + toCreate);
+              if (c === toCreate) {
+                resolve();
+              }
+            }
           }
         }
       }
-      ////console.log("Обработан столбец: " + i);
     }
+  });
 
-    const lateCheck = () => {
-      // Callback анимации создания шара: после создания нужно проверить таблицу заново
-      setTimeout(() => {
-        // задержка запуска проверки. мы ждем, пока закончится анимация заполнения
-        processArray();
-      }, 400);
-    };
-
-    ////console.log("закончили");
-    toCheck = true; // флаг, указывающий на необходимость проверки, если были созданы шары
-  }, 200); // время, необходимое для завершение анимации удаления
-}
+  fillAnimation.then(() => {
+    gameSound.play("ballIn");
+    processArray(ballsTable);
+    console.log(" сейчас будет проверка на возможность хода");
+    if (!isPlayingPossible(ballsTable)) {
+      resetTable(ballsTable);
+    }
+  });
+};
 
 export default fillUpVacancies;

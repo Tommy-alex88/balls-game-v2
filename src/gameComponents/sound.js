@@ -1,21 +1,24 @@
 import * as PIXI from "pixi.js";
-import { gameScene } from "../App";
 import { sound } from "@pixi/sound";
 
-import soundOnTexture from "../media/images/soundOn.png";
-import soundOffTexture from "../media/images/soundOff.png";
-import mainThemeSound from "../media/sounds/MainTheme.mp3";
-import clickSound from "../media/sounds/click.mp3";
-import ballOutSound from "../media/sounds/ballOut.mp3";
+import { gameScene } from "./startGame";
+import soundOnTexture from "../assets/images/soundOn.png";
+import soundOffTexture from "../assets/images/soundOff.png";
+import mainThemeSound from "../assets/sounds/MainTheme.mp3";
+import clickSound from "../assets/sounds/click.mp3";
+import ballOutSound from "../assets/sounds/ballOut.mp3";
+import ballInSound from "../assets/sounds/ballIn.mp3";
 
 let soundIcon = null;
 let playing = false;
+
 const gameSound = sound;
 gameSound.add(
   {
     main: mainThemeSound,
     clickBall: clickSound,
     ballOut: ballOutSound,
+    ballIn: ballInSound,
   },
   {
     preload: true,
