@@ -11,8 +11,9 @@ const score = () => {
   }
   const state = store.getState();
   scoreText = new PIXI.Text("Очки: " + state.score);
-  scoreText.x = 50;
-  scoreText.y = 140;
+  scoreText.anchor.set(0.5);
+  scoreText.x = 250;
+  scoreText.y = 450;
   gameScene.addChild(scoreText);
 };
 

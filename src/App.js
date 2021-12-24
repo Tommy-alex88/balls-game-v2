@@ -1,22 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import Game from "./gameComponents/Game";
+import classes from "./App.module.css";
 
-import { app } from "./gameComponents/startGame";
-import startGame from "./gameComponents/startGame";
-
-function App() {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    ref.current.appendChild(app.view);
-
-    startGame();
-
-    return () => {
-      app.destroy(true, true);
-    };
-  }, []);
-
-  return <div ref={ref}></div>;
-}
-
+export const App = () => {
+  return (
+    <div className={classes.game}>
+      <Game />
+    </div>
+  );
+};
 export default App;

@@ -1,22 +1,32 @@
 import * as PIXI from "pixi.js";
 
 import { soundOff } from "./sound";
-import newBall from "./newBall";
-import animateAtStart from "./animateAtStart";
-import processArray from "./processArray";
-import myTexture from "../assets/images/texture.png";
+import animateAtStart from "./utils/animateAtStart";
+import processArray from "./utils/processArray";
 import score from "./score";
-import createTable from "./createTable";
+import createTable from "./utils/createTable";
 
-const app = new PIXI.Application({ width: 800, height: 440 });
+const app = new PIXI.Application({
+  width: 430,
+  height: 500,
+});
+
+app.loader.add([
+  { name: "backTextureImg", url: "/images/texture.png" },
+  { name: "spriteSheet", url: "/images/sprites/spriteSheet.json" },
+  { name: "gameOverImg", url: "/images/GameOver2.png" },
+]);
+
 const gameScene = new PIXI.Container();
 app.stage.addChild(gameScene);
 
-const backTexture = PIXI.Texture.from(myTexture);
-const sceneFrame = new PIXI.Sprite(backTexture);
-gameScene.addChild(sceneFrame);
+app.loader.load(startGame);
 
-const startGame = () => {
+function startGame(loader, resources) {
+  const texture = app.loader.resources.backTextureImg.texture;
+  const sceneFrame = new PIXI.Sprite(texture);
+  gameScene.addChild(sceneFrame);
+
   score();
   soundOff();
   const table = createTable(true);
@@ -27,7 +37,7 @@ const startGame = () => {
     }
   }
   processArray(table);
-};
+}
 
 export { app, gameScene };
 export default startGame;

@@ -1,42 +1,73 @@
 import * as PIXI from "pixi.js";
 import gsap from "gsap";
 
-import { gameScene } from "./startGame";
-import gameOverTexture from "../assets/images/GameOver.png";
+import { app } from "./startGame";
+import startGame, { gameScene } from "./startGame";
 
 const gameOver = () => {
   // добавляем изображение на случай окончания игры
-  let gameOverPic = new PIXI.Sprite(PIXI.Texture.from(gameOverTexture));
-  gameOverPic.width = 800;
-  gameOverPic.position.x = 0;
-  gameOverPic.position.y = 100;
-  //     clearInterval(timerId); // останавливаем таймер
-  //     alert("Игра окончена! Ваш счет: " + score);
-  //gameScene.visible = false;
-  //app.stage.addChild(sceneFrame); // закрываем картинкой gameScene весь stage, тем самым скрывая игровой процесс
-  //     over = 1; // вспомогательное значение для
+  const gameOverTexture = app.loader.resources.gameOverImg.texture;
+  let gameOverPic = new PIXI.Sprite(gameOverTexture);
+  gameOverPic.width = 150;
+  gameOverPic.height = 150;
+  gameOverPic.anchor.set(0.5);
+  gameOverPic.position.x = 215;
+  gameOverPic.position.y = 220;
+
   gameScene.addChild(gameOverPic); // выводим изображение GameOver
 
   // добавляем текст с подсказкой
   const gameOverText = new PIXI.Text("Ходов больше нет!");
-  gameOverText.x = 250;
+  gameOverText.x = 100;
   gameOverText.y = -50;
   gameScene.addChild(gameOverText);
 
   gsap.to(gameOverText.position, {
     duration: 1,
-    x: 250,
+    x: 100,
     y: 70,
     onComplete: newGameOffer,
   });
 
-  function newGameOffer() {
-    const newGame = new PIXI.Text("Чтобы начать новую игру обновите страницу");
-    newGame.x = 120;
-    newGame.y = 450;
-    gameScene.addChild(newGame);
+  let newGameText = "";
 
-    gsap.to(newGame.position, { duration: 1, x: 120, y: 370 });
+  function newGameOffer() {
+    newGameText = new PIXI.Text("ИГРАТЬ СНОВА");
+    newGameText.buttonMode = true;
+    newGameText.interactive = true;
+    newGameText.x = 110;
+    newGameText.y = 450;
+    newGameText.on("click", newGameHandler);
+    newGameText.on("tap", newGameHandler);
+    gameScene.addChild(newGameText);
+
+    gsap.to(newGameText.position, { duration: 1, x: 110, y: 340 });
+  }
+  function newGameHandler() {
+    gsap.to(gameOverPic.position, { duration: 0.5, x: 800, onComplete: anim1 });
+
+    function anim1() {
+      gameOverPic.destroy();
+      gsap.to(gameOverText.position, {
+        duration: 0.5,
+        x: 800,
+        onComplete: anim2,
+      });
+    }
+
+    function anim2() {
+      gameOverText.destroy();
+      gsap.to(newGameText.position, {
+        duration: 0.5,
+        x: 800,
+        onComplete: endAnim,
+      });
+    }
+
+    function endAnim() {
+      newGameText.destroy();
+      app.loader.load(startGame);
+    }
   }
 };
 

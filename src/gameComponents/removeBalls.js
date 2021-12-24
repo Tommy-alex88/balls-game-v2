@@ -5,8 +5,10 @@ import { gameScene } from "./startGame";
 import fillUpVacancies from "./fillUpVacancies";
 import store from "../store";
 
+const padding = 65;
 // // функция удаления шаров на основании проверки массива методом checkRowsAndColumns()
 const removeBalls = (balls) => {
+  store.dispatch({ type: "TOGGLE_INTERACTABILITY", payload: false });
   let score = 100;
   const removeAnimPromise = new Promise((resolve) => {
     // удаляем шары с меткой TheVal = 0
@@ -39,8 +41,8 @@ const removeBalls = (balls) => {
         tint: "#8e0ff4",
       };
       const text = new PIXI.Text("+100", style);
-      text.x = i * 75 + 335;
-      text.y = j * 75 + 15;
+      text.x = i * 75 + padding - 25;
+      text.y = j * 75 + padding - 50;
       gameScene.addChild(text);
       new gsap.to(text, {
         duration: 1.5,
@@ -49,7 +51,6 @@ const removeBalls = (balls) => {
         onCompleteParams: [text],
       });
       // считаем очки: по 100 за шар
-      console.log(score);
     }
 
     // callback при завершении анимации удаления шара

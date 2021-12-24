@@ -15,7 +15,6 @@ const isPlayingPossible = (table) => {
       }
     }
   }
-  console.log("ходов нет");
   return false; //Ходов больше нет
 };
 

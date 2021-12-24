@@ -1,3 +1,10 @@
 body {
-  background: lemonchiffon url("./assets/images/wallpaper.jpg");
+  background: lemonchiffon url("./assets/images/wallpaper.jpg") no-repeat fixed;
+  width: 100%;
+}
+@media (max-width: 750px) {
+  body {
+    height: 100%;
+    background: lemonchiffon url("./assets/images/wallpaper.jpg") repeat fixed;
+  }
 }

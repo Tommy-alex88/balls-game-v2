@@ -3,13 +3,17 @@ import gsap from "gsap";
 import { gameScene } from "./startGame";
 import { gameSound } from "./sound";
 import newBall from "./newBall";
-import processArray from "./processArray";
-import resetTable from "./resetTable";
-import isPlayingPossible from "./isPlayingPossible";
+import processArray from "./utils/processArray";
+import resetTable from "./utils/resetTable";
+import isPlayingPossible from "./utils/isPlayingPossible";
+import store from "../store";
+
+const padding = 65;
 
 //заполнение вакансий, образованных после "сгорания" шаров
 const fillUpVacancies = (ballsTable) => {
   const fillAnimation = new Promise((resolve) => {
+    //store.dispatch({ type: "TOGGLE_INTERACTABILITY", payload: false });
     for (let i = 0; i < 5; i++) {
       let toCreate = 0;
       for (let j = 4; j >= 0; j--) {
@@ -26,8 +30,8 @@ const fillUpVacancies = (ballsTable) => {
         ) {
           new gsap.to(ballsTable[i][j - 1].position, {
             duration: 0.5, // анимация перемещения шара вниз
-            x: 360 + 75 * i,
-            y: 65 + 75 * (j + toCreate),
+            x: padding + 75 * i,
+            y: padding + 75 * (j + toCreate),
             onComplete: updateTable(),
           });
           function updateTable() {
@@ -37,8 +41,6 @@ const fillUpVacancies = (ballsTable) => {
         }
         // если нет самого верхнего шара в таблице
         else if (j === 0 && ballsTable[i][j] === null) {
-          // //console.log("Обрабатываемый индекс: " + j + ". Нет шара в верху таблицы");
-
           for (let c = 0; c <= toCreate; c++) {
             // создаем шары в количестве toCreate
             let ball = newBall(i, c, null);
@@ -53,7 +55,6 @@ const fillUpVacancies = (ballsTable) => {
             gameScene.addChild(ball);
             ballsTable[i][c] = ball; // обновляем нашу таблицу
             function complete() {
-              console.log(c + "  " + toCreate);
               if (c === toCreate) {
                 resolve();
               }
@@ -67,10 +68,10 @@ const fillUpVacancies = (ballsTable) => {
   fillAnimation.then(() => {
     gameSound.play("ballIn");
     processArray(ballsTable);
-    console.log(" сейчас будет проверка на возможность хода");
     if (!isPlayingPossible(ballsTable)) {
       resetTable(ballsTable);
     }
+    store.dispatch({ type: "TOGGLE_INTERACTABILITY", payload: true });
   });
 };
 

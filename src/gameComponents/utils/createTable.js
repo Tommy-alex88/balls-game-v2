@@ -1,8 +1,6 @@
-import animateAtStart from "./animateAtStart";
-import processArray from "./processArray";
 import checkRowsAndColumns from "./checkRowsAndColumns";
 import isPlayingPossible from "./isPlayingPossible";
-import newBall from "./newBall";
+import newBall from "../newBall";
 
 const createTable = () => {
   const ballsTable = [];
@@ -13,15 +11,13 @@ const createTable = () => {
       ballsTable[i] = [];
       for (let j = 0; j < 5; j++) {
         let ball = newBall(i, j, ballsTable); // создание шаров
-        ballsTable[i][j] = ball; // обновляем нашу таблицу
+        ballsTable[i][j] = ball; // обновление таблицы
       }
     }
     const isBallsBurned = !checkRowsAndColumns(ballsTable);
     const isNextMoveExist = isPlayingPossible(ballsTable);
     isTablePrepared = isBallsBurned && isNextMoveExist;
-    console.log("подготовка таблицы");
   }
-  console.log("таблица готова");
   return ballsTable;
 };
 

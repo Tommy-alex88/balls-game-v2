@@ -1,5 +1,5 @@
 import checkRowsAndColumns from "./checkRowsAndColumns";
-import removeBalls from "./removeBalls";
+import removeBalls from "../removeBalls";
 
 const processArray = (table) => {
   let toCheck = checkRowsAndColumns(table); // проверяем таблицу, ищем по три и более шаров подряд и помечаем их (ball.TheVal = 0)

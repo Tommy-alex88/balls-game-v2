@@ -2,23 +2,20 @@ import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 
 import { gameScene } from "./startGame";
-import soundOnTexture from "../assets/images/soundOn.png";
-import soundOffTexture from "../assets/images/soundOff.png";
-import mainThemeSound from "../assets/sounds/MainTheme.mp3";
-import clickSound from "../assets/sounds/click.mp3";
-import ballOutSound from "../assets/sounds/ballOut.mp3";
-import ballInSound from "../assets/sounds/ballIn.mp3";
 
 let soundIcon = null;
 let playing = false;
 
+const soundOffTexture = PIXI.Texture.from("/images/soundOff.png");
+const soundOnTexture = PIXI.Texture.from("/images/soundOn.png");
+
 const gameSound = sound;
 gameSound.add(
   {
-    main: mainThemeSound,
-    clickBall: clickSound,
-    ballOut: ballOutSound,
-    ballIn: ballInSound,
+    main: "/sounds/MainTheme.mp3",
+    clickSound: "/sounds/click.mp3",
+    ballOut: "/sounds/ballOut.mp3",
+    ballIn: "/sounds/ballIn.mp3",
   },
   {
     preload: true,
@@ -29,17 +26,18 @@ const setOptions = (sprite, clickHandler) => {
   sprite.height = 70;
   sprite.width = 70;
   sprite._anchor.set(0.5);
-  sprite.position.set(100, 250);
+  sprite.position.set(100, 450);
   sprite.buttonMode = true;
   sprite.interactive = true;
   sprite.on("click", clickHandler);
+  sprite.on("tap", clickHandler);
 };
 
 const changeIcon = (icon, texture, clickHandler) => {
   if (icon !== null) {
     icon.destroy();
   }
-  icon = new PIXI.Sprite(PIXI.Texture.from(texture));
+  icon = new PIXI.Sprite(texture);
   setOptions(icon, clickHandler);
   return icon;
 };
@@ -47,7 +45,6 @@ const changeIcon = (icon, texture, clickHandler) => {
 //функция выключения звука во время игры
 const soundOff = () => {
   gameSound.muteAll();
-
   soundIcon = changeIcon(soundIcon, soundOffTexture, soundOn);
   gameScene.addChild(soundIcon);
 };
