@@ -5,7 +5,7 @@ Demo project
 To start the game do the following:
 - clone the repo with command: 
 ```
-clone https://github.com/Tommy-alex88/balls-game-v2.git
+git clone https://github.com/Tommy-alex88/balls-game-v2.git
 ```
 - in command line run
 ```
